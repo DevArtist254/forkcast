@@ -12,3 +12,12 @@ const timeout = function (s) {
 // https://forkify-api.jonas.io
 
 ///////////////////////////////////////
+// Controller 
+
+const createRecipe = async () => {
+  try {
+
+  } catch {
+
+  }
+}

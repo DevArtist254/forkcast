@@ -1,0 +1,26 @@
+{
+  "name": "forkcast",
+  "version": "1.0.0",
+  "description": "Select your right dish",
+  "scripts": {
+    "dev": "parcel serve index.html --port 3000"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DevArtist254/forkcast.git"
+  },
+  "keywords": [
+    "forcast/devartist"
+  ],
+  "author": "DevArtist254",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DevArtist254/forkcast/issues"
+  },
+  "homepage": "https://github.com/DevArtist254/forkcast#readme",
+  "devDependencies": {
+    "@parcel/transformer-sass": "^2.16.0",
+    "parcel": "^2.16.0",
+    "sass": "^1.93.2"
+  }
+}
