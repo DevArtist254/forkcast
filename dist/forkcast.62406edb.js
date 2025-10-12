@@ -10,9 +10,12 @@ const timeout = function(s) {
 // https://forkify-api.jonas.io
 ///////////////////////////////////////
 // Controller 
+function loadSnipper() {}
 const loadRecipe = async ()=>{
     try {
-        const res = await fetch("https://forkify-api.jonas.io/api/v2/recipes/5ed6604591c37cdc054bc886?key=c50896c6-55df-40cb-b60f-93509e64dc33");
+        const id = window.location.hash.slice(1);
+        if (!id) return;
+        const res = await fetch(`https://forkify-api.jonas.io/api/v2/recipes/${id}?key=c50896c6-55df-40cb-b60f-93509e64dc33`);
         const data = await res.json();
         console.log(data);
         const { ...receivedRecipe } = data.data.recipe;

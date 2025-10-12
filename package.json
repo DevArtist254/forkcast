@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Select your right dish",
   "scripts": {
-    "dev": "parcel serve index.html --port 3000"
+    "dev": "parcel serve ./index.html --port 3000"
   },
   "repository": {
     "type": "git",
