@@ -1,12 +1,19 @@
+import { API_URL } from "./config";
+import { getJSON } from "./helpers";
+
 export const state = {
-  recipe: {}
+  recipe: {},
+  search: {
+    query: '',
+    results: [],
+    page: 1,
+    resultsPerPage: 10
+  }
 };
 
 export const loadRecipe = async (id) => {
   try {
-    const res = await fetch(`https://forkify-api.jonas.io/api/v2/recipes/${id}?key=c50896c6-55df-40cb-b60f-93509e64dc33`);
-    const data = await res.json();
-
+    const data = await getJSON(`${API_URL}/${id}`);
     const { ...receivedRecipe } = data.data.recipe;
 
     const recipe = {
@@ -20,7 +27,31 @@ export const loadRecipe = async (id) => {
     }
 
     state.recipe = recipe;
-  } catch {
-    alert('Error');
+  } catch (err) {
+    throw err;
   }
+}
+
+export const loadQueryRecipes = async (query) => {
+  try {
+    const data = await getJSON(`${API_URL}?search=${query}`);
+ 
+    state.search.results = data.data.recipes.map(receivedRecipes => { 
+    return {
+      publisher: receivedRecipes.publisher,
+      imageUrl: receivedRecipes.image_url,
+      title: receivedRecipes.title,
+      id: receivedRecipes.id
+      }
+    });
+  } catch(err) {
+    console.log(err);
+  }
+}
+
+export const loadSearchPages = function (page = state.search.page) {
+  state.search.page = page;
+  const start = (page - 1) * state.search.resultsPerPage;
+  const end = page * state.search.resultsPerPage;
+  return state.search.results.slice(start, end);
 }

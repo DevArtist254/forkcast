@@ -1,13 +1,7 @@
-import { state, loadRecipe } from "./model";
+import { state, loadRecipe, loadQueryRecipes, loadSearchPages } from "./model";
 import recipeView from "./views/recipeView";
-
-const timeout = function (s) {
-  return new Promise(function (_, reject) {
-    setTimeout(function () {
-      reject(new Error(`Request took too long! Timeout after ${s} second`));
-    }, s * 1000);
-  });
-};
+import resultsView from "./views/resultsView";
+import searchView from "./views/searchView";
 
 // NEW API URL (instead of the one shown in the video)
 // https://forkify-api.jonas.io
@@ -27,10 +21,27 @@ const ctrlRecipe = async () => {
     recipeView.render(state.recipe);
 
   } catch {
-    alert("Error");
+    recipeView.renderErrorMessage();
   }
 }
 
+const queryRecipes = async () => {
+  try {
+    resultsView.renderSnipper();
 
-['load', 'hashchange'].forEach(ev => window.addEventListener(ev, ctrlRecipe))
+    const query = searchView.getQuery();
+
+    await loadQueryRecipes(query);
+
+    resultsView.render(loadSearchPages(3));
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+function init() {
+  recipeView.addHandlerRender(ctrlRecipe);
+  searchView.addSearchHandler(queryRecipes);
+}
+init()
 console.log("Hello world");
