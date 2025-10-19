@@ -1,4 +1,5 @@
-import { state, loadRecipe, loadQueryRecipes, loadSearchPages } from "./model";
+import { state, loadRecipe, loadSearchPages, loadQueryRecipes } from "./model";
+import paginationView from "./views/paginationView";
 import recipeView from "./views/recipeView";
 import resultsView from "./views/resultsView";
 import searchView from "./views/searchView";
@@ -33,15 +34,27 @@ const queryRecipes = async () => {
 
     await loadQueryRecipes(query);
 
-    resultsView.render(loadSearchPages(3));
+    resultsView.render(loadSearchPages(4));
+
+    paginationView.render(state.search);
   } catch (err) {
     console.log(err);
   }
 }
 
+const ctrlPages = (clickedEl) => {
+  const pageNum = paginationView.getNewPageNumber(clickedEl);
+
+  state.search.page = pageNum;
+
+  resultsView.render(loadSearchPages(state.search.page));
+
+  paginationView.render(state.search);  
+}
+
 function init() {
   recipeView.addHandlerRender(ctrlRecipe);
   searchView.addSearchHandler(queryRecipes);
+  paginationView.addButtonHandler(ctrlPages);
 }
 init()
-console.log("Hello world");
