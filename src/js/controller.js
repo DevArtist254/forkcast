@@ -48,13 +48,13 @@ const ctrlPages = (pageNum) => {
 
   resultsView.render(loadSearchPages(state.search.page));
 
-  paginationView.render(state.search);  
+  paginationView.render(state.search);
 }
 
 const ctrlUpdateServings = (update) => {
   updateServings(update);
 
-  recipeView.render(state.recipe);
+  recipeView.update(state.recipe);
 }
 
 function init() {

@@ -758,7 +758,7 @@ const ctrlPages = (pageNum)=>{
 };
 const ctrlUpdateServings = (update)=>{
     (0, _model.updateServings)(update);
-    (0, _recipeViewDefault.default).render((0, _model.state).recipe);
+    (0, _recipeViewDefault.default).update((0, _model.state).recipe);
 };
 function init() {
     (0, _recipeViewDefault.default).addHandlerRender(ctrlRecipe);
@@ -1032,17 +1032,24 @@ var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
 class View {
     _data;
     render(data) {
+        if (!data || Array.isArray(data) && data.length === 0) return this.renderError();
         this._data = data;
         const markup = this._generateMarkup();
         this._parentEl.innerHTML = '';
         this._parentEl.insertAdjacentHTML('afterbegin', markup);
     }
     update(data) {
+        if (!data || Array.isArray(data) && data.length === 0) return this.renderError();
         this._data = data;
         const markup = this._generateMarkup();
-        this._parentEl.innerHTML = '';
         const virDom = document.createRange().createContextualFragment(markup);
-        this._parentEl.insertAdjacentHTML('afterbegin', markup);
+        const curDom = Array.from(this._parentEl.querySelectorAll('*'));
+        const newDom = Array.from(virDom.querySelectorAll('*'));
+        newDom.forEach((newEl, i)=>{
+            const curEl = curDom[i];
+            if (!newEl.isEqualNode(curEl) && newEl.firstChild?.nodeValue.trim() !== '') curEl.textContent = newEl.textContent;
+            if (!newEl.isEqualNode(curEl)) Array.from(newEl.attributes).forEach((attr)=>curEl.setAttribute(attr.name, attr.value));
+        });
     }
     renderSnipper() {
         const markup = `

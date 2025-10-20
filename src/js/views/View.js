@@ -3,6 +3,8 @@ import icons from "url:../../img/icons.svg";
 export default class View {
   _data;
   render(data) {
+    if (!data || (Array.isArray(data) && data.length === 0)) return this.renderError();
+
     this._data = data;
 
     const markup = this._generateMarkup()
@@ -12,14 +14,29 @@ export default class View {
   }
 
   update(data) {
+    if (!data || (Array.isArray(data) && data.length === 0)) return this.renderError();
+
     this._data = data;
 
     const markup = this._generateMarkup()
 
-    this._parentEl.innerHTML = '';
-
     const virDom = document.createRange().createContextualFragment(markup);
-    this._parentEl.insertAdjacentHTML('afterbegin', markup); 
+    const curDom = Array.from(this._parentEl.querySelectorAll('*'));
+    const newDom = Array.from(virDom.querySelectorAll('*'));
+    
+    newDom.forEach((newEl, i) => {
+      const curEl = curDom[i];
+
+      if(!newEl.isEqualNode(curEl) && newEl.firstChild?.nodeValue.trim() !== '') {
+        curEl.textContent = newEl.textContent;
+      }
+
+      if(!newEl.isEqualNode(curEl)) {
+        Array.from(newEl.attributes).forEach(attr => 
+          curEl.setAttribute(attr.name, attr.value)
+        )
+      }
+    }) 
   }
 
   renderSnipper() {
