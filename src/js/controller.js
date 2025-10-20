@@ -1,4 +1,4 @@
-import { state, loadRecipe, loadSearchPages, loadQueryRecipes } from "./model";
+import { state, loadRecipe, loadSearchPages, loadQueryRecipes, updateServings } from "./model";
 import paginationView from "./views/paginationView";
 import recipeView from "./views/recipeView";
 import resultsView from "./views/resultsView";
@@ -21,6 +21,7 @@ const ctrlRecipe = async () => {
 
     recipeView.render(state.recipe);
 
+    recipeView.addUpdateHandler(ctrlUpdateServings)
   } catch {
     recipeView.renderErrorMessage();
   }
@@ -34,7 +35,7 @@ const queryRecipes = async () => {
 
     await loadQueryRecipes(query);
 
-    resultsView.render(loadSearchPages(4));
+    resultsView.render(loadSearchPages());
 
     paginationView.render(state.search);
   } catch (err) {
@@ -42,14 +43,18 @@ const queryRecipes = async () => {
   }
 }
 
-const ctrlPages = (clickedEl) => {
-  const pageNum = paginationView.getNewPageNumber(clickedEl);
-
+const ctrlPages = (pageNum) => {
   state.search.page = pageNum;
 
   resultsView.render(loadSearchPages(state.search.page));
 
   paginationView.render(state.search);  
+}
+
+const ctrlUpdateServings = (update) => {
+  updateServings(update);
+
+  recipeView.render(state.recipe);
 }
 
 function init() {

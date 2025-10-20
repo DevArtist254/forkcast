@@ -6,17 +6,16 @@ class PaginationView extends View {
 
   addButtonHandler(handler) {
     return this._parentEl.addEventListener('click', (e) => {
-      handler(e.target.closest('.btn--inline'));
+      
+      const btn = e.target.closest('.btn--inline');
+
+      if (!btn) return;
+      
+      const pageNum = btn.dataset.gotopage
+
+      handler(+pageNum);
     });
   }
-
-  getNewPageNumber(clickedEl){
-    if (!clickedEl) return;
-
-    const pageNum = clickedEl.dataset.gotopage;
-    
-    return +pageNum;
-  };
 
   _generateMarkup() {
     // console.log(this._data);

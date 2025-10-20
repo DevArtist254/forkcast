@@ -1,5 +1,6 @@
 import icons from "url:../../img/icons.svg";
 import View from "./View";
+import { fraction } from "../helpers";
 
 class RecipeView extends View {
   _parentEl = document.querySelector('.recipe');
@@ -7,6 +8,15 @@ class RecipeView extends View {
 
   addHandlerRender(handler){
     ['load', 'hashchange'].forEach(ev => window.addEventListener(ev, handler));
+  }
+
+  addUpdateHandler(handler) {
+    return this._parentEl.addEventListener('click', (e) => {
+      const btn = e.target.closest('.btn--tiny');
+      if(!btn) return;
+      const updatedServ = +btn.dataset.servingsCount
+      if(updatedServ > 0) handler(updatedServ);
+    })
   }
 
   _generateMarkup() {
@@ -34,14 +44,14 @@ class RecipeView extends View {
             <span class="recipe__info-text">servings</span>
 
             <div class="recipe__info-buttons">
-              <button class="btn--tiny btn--increase-servings">
+              <button data-servings-count="${this._data.servings - 1}" class="btn--tiny btn--increase-servings">
                 <svg>
                   <use href="${icons}#icon-minus-circle"></use>
                 </svg>
               </button>
-              <button class="btn--tiny btn--increase-servings">
+              <button data-servings-count="${this._data.servings + 1}" class="btn--tiny btn--increase-servings">
                 <svg>
-                  <use href="src/img/icons.svg#icon-plus-circle"></use>
+                  <use href="${icons}#icon-plus-circle"></use>
                 </svg>
               </button>
             </div>
@@ -67,7 +77,7 @@ class RecipeView extends View {
               <svg class="recipe__icon">
                 <use href="${icons}#icon-check"></use>
               </svg>
-              <div class="recipe__quantity">${el.quantity}</div>
+              <div class="recipe__quantity">${fraction(el.quantity)}</div>
               <div class="recipe__description">
                 <span class="recipe__unit">${el.unit}</span>
                 ${el.description}

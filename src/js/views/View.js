@@ -11,6 +11,17 @@ export default class View {
     this._parentEl.insertAdjacentHTML('afterbegin', markup); 
   }
 
+  update(data) {
+    this._data = data;
+
+    const markup = this._generateMarkup()
+
+    this._parentEl.innerHTML = '';
+
+    const virDom = document.createRange().createContextualFragment(markup);
+    this._parentEl.insertAdjacentHTML('afterbegin', markup); 
+  }
+
   renderSnipper() {
     const markup = `
     <div class="spinner">

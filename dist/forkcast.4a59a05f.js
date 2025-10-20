@@ -735,6 +735,7 @@ const ctrlRecipe = async ()=>{
         (0, _recipeViewDefault.default).renderSnipper();
         await (0, _model.loadRecipe)(id);
         (0, _recipeViewDefault.default).render((0, _model.state).recipe);
+        (0, _recipeViewDefault.default).addUpdateHandler(ctrlUpdateServings);
     } catch  {
         (0, _recipeViewDefault.default).renderErrorMessage();
     }
@@ -744,17 +745,20 @@ const queryRecipes = async ()=>{
         (0, _resultsViewDefault.default).renderSnipper();
         const query = (0, _searchViewDefault.default).getQuery();
         await (0, _model.loadQueryRecipes)(query);
-        (0, _resultsViewDefault.default).render((0, _model.loadSearchPages)(4));
+        (0, _resultsViewDefault.default).render((0, _model.loadSearchPages)());
         (0, _paginationViewDefault.default).render((0, _model.state).search);
     } catch (err) {
         console.log(err);
     }
 };
-const ctrlPages = (clickedEl)=>{
-    const pageNum = (0, _paginationViewDefault.default).getNewPageNumber(clickedEl);
+const ctrlPages = (pageNum)=>{
     (0, _model.state).search.page = pageNum;
     (0, _resultsViewDefault.default).render((0, _model.loadSearchPages)((0, _model.state).search.page));
     (0, _paginationViewDefault.default).render((0, _model.state).search);
+};
+const ctrlUpdateServings = (update)=>{
+    (0, _model.updateServings)(update);
+    (0, _recipeViewDefault.default).render((0, _model.state).recipe);
 };
 function init() {
     (0, _recipeViewDefault.default).addHandlerRender(ctrlRecipe);
@@ -800,6 +804,7 @@ parcelHelpers.export(exports, "state", ()=>state);
 parcelHelpers.export(exports, "loadRecipe", ()=>loadRecipe);
 parcelHelpers.export(exports, "loadQueryRecipes", ()=>loadQueryRecipes);
 parcelHelpers.export(exports, "loadSearchPages", ()=>loadSearchPages);
+parcelHelpers.export(exports, "updateServings", ()=>updateServings);
 var _config = require("./config");
 var _helpers = require("./helpers");
 const state = {
@@ -850,6 +855,10 @@ const loadSearchPages = function(page = state.search.page) {
     const end = page * state.search.resultsPerPage;
     return state.search.results.slice(start, end);
 };
+const updateServings = function(newServ) {
+    state.recipe.ingredients.forEach((el)=>el.quantity = el.quantity * newServ / state.recipe.servings);
+    state.recipe.servings = newServ;
+};
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","./config":"2hPh4","./helpers":"7nL9P"}],"2hPh4":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
@@ -863,6 +872,7 @@ const API_KEY = 'c50896c6-55df-40cb-b60f-93509e64dc33';
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "getJSON", ()=>getJSON);
+parcelHelpers.export(exports, "fraction", ()=>fraction);
 const timeout = function(s) {
     return new Promise(function(_, reject) {
         setTimeout(function() {
@@ -880,6 +890,21 @@ const getJSON = async function(url) {
         throw err;
     }
 };
+const fraction = (decimal)=>{
+    if (Number.isInteger(decimal)) return `${decimal}`;
+    const whole = Math.floor(decimal);
+    const fractionPart = decimal - whole;
+    const str = fractionPart.toString();
+    const decimalPlaces = str.split('.')[1].length;
+    const denominator = Math.pow(10, decimalPlaces);
+    const numerator = Math.round(fractionPart * denominator);
+    function gcd(a, b) {
+        return b ? gcd(b, a % b) : a;
+    }
+    const divisor = gcd(numerator, denominator);
+    if (whole > 0) return `${whole} ${numerator / divisor}/${denominator / divisor}`;
+    if (whole === 0) return `${numerator / divisor}/${denominator / divisor}`;
+};
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"3wx5k":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
@@ -888,6 +913,7 @@ var _iconsSvg = require("url:../../img/icons.svg");
 var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
 var _view = require("./View");
 var _viewDefault = parcelHelpers.interopDefault(_view);
+var _helpers = require("../helpers");
 class RecipeView extends (0, _viewDefault.default) {
     _parentEl = document.querySelector('.recipe');
     _errorMessage = 'We could not find that recipe. Please try another one!';
@@ -896,6 +922,14 @@ class RecipeView extends (0, _viewDefault.default) {
             'load',
             'hashchange'
         ].forEach((ev)=>window.addEventListener(ev, handler));
+    }
+    addUpdateHandler(handler) {
+        return this._parentEl.addEventListener('click', (e)=>{
+            const btn = e.target.closest('.btn--tiny');
+            if (!btn) return;
+            const updatedServ = +btn.dataset.servingsCount;
+            if (updatedServ > 0) handler(updatedServ);
+        });
     }
     _generateMarkup() {
         return `
@@ -922,14 +956,14 @@ class RecipeView extends (0, _viewDefault.default) {
             <span class="recipe__info-text">servings</span>
 
             <div class="recipe__info-buttons">
-              <button class="btn--tiny btn--increase-servings">
+              <button data-servings-count="${this._data.servings - 1}" class="btn--tiny btn--increase-servings">
                 <svg>
                   <use href="${0, _iconsSvgDefault.default}#icon-minus-circle"></use>
                 </svg>
               </button>
-              <button class="btn--tiny btn--increase-servings">
+              <button data-servings-count="${this._data.servings + 1}" class="btn--tiny btn--increase-servings">
                 <svg>
-                  <use href="src/img/icons.svg#icon-plus-circle"></use>
+                  <use href="${0, _iconsSvgDefault.default}#icon-plus-circle"></use>
                 </svg>
               </button>
             </div>
@@ -955,7 +989,7 @@ class RecipeView extends (0, _viewDefault.default) {
               <svg class="recipe__icon">
                 <use href="${0, _iconsSvgDefault.default}#icon-check"></use>
               </svg>
-              <div class="recipe__quantity">${el.quantity}</div>
+              <div class="recipe__quantity">${(0, _helpers.fraction)(el.quantity)}</div>
               <div class="recipe__description">
                 <span class="recipe__unit">${el.unit}</span>
                 ${el.description}
@@ -987,7 +1021,7 @@ class RecipeView extends (0, _viewDefault.default) {
 }
 exports.default = new RecipeView();
 
-},{"url:../../img/icons.svg":"fd0vu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","./View":"jSw21"}],"fd0vu":[function(require,module,exports,__globalThis) {
+},{"url:../../img/icons.svg":"fd0vu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","./View":"jSw21","../helpers":"7nL9P"}],"fd0vu":[function(require,module,exports,__globalThis) {
 module.exports = module.bundle.resolve("icons.0809ef97.svg") + "?" + Date.now();
 
 },{}],"jSw21":[function(require,module,exports,__globalThis) {
@@ -1001,6 +1035,13 @@ class View {
         this._data = data;
         const markup = this._generateMarkup();
         this._parentEl.innerHTML = '';
+        this._parentEl.insertAdjacentHTML('afterbegin', markup);
+    }
+    update(data) {
+        this._data = data;
+        const markup = this._generateMarkup();
+        this._parentEl.innerHTML = '';
+        const virDom = document.createRange().createContextualFragment(markup);
         this._parentEl.insertAdjacentHTML('afterbegin', markup);
     }
     renderSnipper() {
@@ -1095,13 +1136,11 @@ class PaginationView extends (0, _viewDefault.default) {
     _parentEl = document.querySelector('.pagination');
     addButtonHandler(handler) {
         return this._parentEl.addEventListener('click', (e)=>{
-            handler(e.target.closest('.btn--inline'));
+            const btn = e.target.closest('.btn--inline');
+            if (!btn) return;
+            const pageNum = btn.dataset.gotopage;
+            handler(+pageNum);
         });
-    }
-    getNewPageNumber(clickedEl) {
-        if (!clickedEl) return;
-        const pageNum = clickedEl.dataset.gotopage;
-        return +pageNum;
     }
     _generateMarkup() {
         // console.log(this._data);
