@@ -8,8 +8,17 @@ export const state = {
     results: [],
     page: 1,
     resultsPerPage: 10,
-  }
+  },
+  bookmarks: []
 };
+
+export const setClickedBoorkmark = (clickedBookmarkId) => {
+  const bookmark = state.search.results.find(el => el.id === clickedBookmarkId);
+
+  state.bookmarks.push(bookmark);
+
+  state.recipe.bookmark = true;
+}
 
 export const loadRecipe = async (id) => {
   try {
@@ -23,7 +32,8 @@ export const loadRecipe = async (id) => {
       imageUrl: receivedRecipe.image_url,
       title: receivedRecipe.title,
       servings: receivedRecipe.servings,
-      cookingTime: receivedRecipe.cooking_time
+      cookingTime: receivedRecipe.cooking_time,
+      id: receivedRecipe.id
     }
 
     state.recipe = recipe;

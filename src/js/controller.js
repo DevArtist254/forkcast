@@ -1,4 +1,5 @@
-import { state, loadRecipe, loadSearchPages, loadQueryRecipes, updateServings } from "./model";
+import { state, loadRecipe, loadSearchPages, loadQueryRecipes, updateServings, setClickedBoorkmark } from "./model";
+import bookmarksView from "./views/bookmarksView";
 import paginationView from "./views/paginationView";
 import recipeView from "./views/recipeView";
 import resultsView from "./views/resultsView";
@@ -21,7 +22,9 @@ const ctrlRecipe = async () => {
 
     recipeView.render(state.recipe);
 
-    recipeView.addUpdateHandler(ctrlUpdateServings)
+    recipeView.addUpdateHandler(ctrlUpdateServings);
+
+    recipeView.addBookmarkHandler(ctrlBookmarkUpdates);
   } catch {
     recipeView.renderErrorMessage();
   }
@@ -56,6 +59,15 @@ const ctrlUpdateServings = (update) => {
 
   recipeView.update(state.recipe);
 }
+
+
+const ctrlBookmarkUpdates = (bookmarkId) => {
+  setClickedBoorkmark(bookmarkId);
+
+  recipeView.update(state.recipe);
+
+  bookmarksView.render(state.bookmarks);
+} 
 
 function init() {
   recipeView.addHandlerRender(ctrlRecipe);

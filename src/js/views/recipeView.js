@@ -10,6 +10,15 @@ class RecipeView extends View {
     ['load', 'hashchange'].forEach(ev => window.addEventListener(ev, handler));
   }
 
+  addBookmarkHandler(handler) {
+    return this._parentEl.addEventListener('click', (e) => {
+      const btn = e.target.closest('.btn--bookmark');
+      if(!btn) return;
+      const id = btn.dataset.bookmarkId;
+      handler(id);
+    })
+  }
+
   addUpdateHandler(handler) {
     return this._parentEl.addEventListener('click', (e) => {
       const btn = e.target.closest('.btn--tiny');
@@ -62,9 +71,9 @@ class RecipeView extends View {
               <use href="${icons}#icon-user"></use>
             </svg>
           </div>
-          <button class="btn--round">
+          <button data-bookmark-id=${this._data.id} class="btn--round btn--bookmark">
             <svg class="">
-              <use href="${icons}#icon-bookmark-fill"></use>
+              <use href="${icons}#icon-bookmark${this._data.bookmark ? "-fill" : ""}"></use>
             </svg>
           </button>
         </div>
