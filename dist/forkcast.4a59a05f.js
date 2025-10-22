@@ -1123,14 +1123,24 @@ exports.default = new SearchView();
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"kBQ4r":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
+var _previewView = require("./previewView");
+var _previewViewDefault = parcelHelpers.interopDefault(_previewView);
+class ResultsView extends (0, _previewViewDefault.default) {
+    _parentEl = document.querySelector('.results');
+    _errorMessage = 'Try again, the recipe your searching for is not here..';
+}
+exports.default = new ResultsView();
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","./previewView":"6tKHS"}],"6tKHS":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
 var _iconsSvg = require("url:../../img/icons.svg");
 var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
 var _view = require("./View");
 var _viewDefault = parcelHelpers.interopDefault(_view);
-class ResultsView extends (0, _viewDefault.default) {
-    _parentEl = document.querySelector('.results');
-    _errorMessage = 'Try again, the recipe your searching for is not here..';
+class PreviewView extends (0, _viewDefault.default) {
     _generateMarkup() {
+        console.log("Hello");
         return this._data.map(this._markup).join('');
     }
     _markup(element) {
@@ -1154,7 +1164,7 @@ class ResultsView extends (0, _viewDefault.default) {
     `;
     }
 }
-exports.default = new ResultsView();
+exports.default = PreviewView;
 
 },{"url:../../img/icons.svg":"fd0vu","./View":"jSw21","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"7NIiB":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
@@ -1218,39 +1228,14 @@ exports.default = new PaginationView();
 },{"url:../../img/icons.svg":"fd0vu","./View":"jSw21","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"1qGeA":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-var _iconsSvg = require("url:../../img/icons.svg");
-var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
-var _view = require("./View");
-var _viewDefault = parcelHelpers.interopDefault(_view);
-class BookmarksView extends (0, _viewDefault.default) {
+var _previewView = require("./previewView");
+var _previewViewDefault = parcelHelpers.interopDefault(_previewView);
+class BookmarksView extends (0, _previewViewDefault.default) {
     _parentEl = document.querySelector('.bookmarks');
     _errorMessage = 'Please bookmark to save your recipe..';
-    _generateMarkup() {
-        return this._data.map(this._markup).join('');
-    }
-    _markup(element) {
-        return `
-           <li class="preview">
-            <a class="preview__link" href="#${element.id}">
-              <figure class="preview__fig">
-                <img src="${element.imageUrl}" alt="Test" />
-              </figure>
-              <div class="preview__data">
-                <h4 class="preview__title">${element.title}</h4>
-                <p class="preview__publisher">${element.publisher}</p>
-                <div class="preview__user-generated">
-                  <svg>
-                    <use href="${0, _iconsSvgDefault.default}#icon-user"></use>
-                  </svg>
-                </div>
-              </div>
-            </a>
-          </li>
-    `;
-    }
 }
 exports.default = new BookmarksView();
 
-},{"url:../../img/icons.svg":"fd0vu","./View":"jSw21","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}]},["hgQdQ","7dWZ8"], "7dWZ8", "parcelRequire5f05", {}, "./", "/")
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","./previewView":"6tKHS"}]},["hgQdQ","7dWZ8"], "7dWZ8", "parcelRequire5f05", {}, "./", "/")
 
 //# sourceMappingURL=forkcast.4a59a05f.js.map
